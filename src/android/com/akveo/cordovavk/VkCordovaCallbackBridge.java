@@ -1,6 +1,5 @@
 package com.akveo.cordovavk;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import com.vk.sdk.VKAccessToken;
@@ -29,7 +28,6 @@ public class VkCordovaCallbackBridge extends VKSdkListener {
     private void tokenResult(String eventName, VKAccessToken accessToken) {
         try {
             callbackContext.sendPluginResult(SdkUtil.createAccessTokenEventResult(eventName, accessToken, true));
-            SdkUtil.showWebViewAlert((Activity) webViewContext, "after token result: " + eventName);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
