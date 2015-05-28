@@ -17,7 +17,10 @@ VkSdk.prototype.init = function(appId, successCallback, errorCallback) {
         if (result.eventType === 'initialized') {
             successCallback(result);
         } else {
-            document.dispatchEvent(new CustomEvent('vkSdk.' + result.eventType, { detail: result.eventData }));
+            var event = document.createEvent('Event');
+            event.initEvent('vkSdk.' + result.eventType, true, true);
+            event.detail = result.eventData;
+            document.dispatchEvent(event);
         }
     }
     function sdkListenerError(err) {
