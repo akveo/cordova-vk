@@ -18,14 +18,14 @@
         <clobbers target="VkSdk" />
     </js-module>
     <!-- ios -->
-<!--    <platform name="ios">
+    <platform name="ios">
         <preference name="VK_APP_ID" />
         <info>
             You need to register VKontakte application first.
         </info>
         <config-file target="config.xml" parent="/*">
-            <feature name="SocialVk">
-                <param name="ios-package" value="SocialVk"/>
+            <feature name="VkSdk">
+                <param name="ios-package" value="VkSdk"/>
             </feature>
         </config-file>
 
@@ -48,7 +48,7 @@
                 </dict>
             </array>
         </config-file>
-    </platform>-->
+    </platform>
 
     <!-- android -->
     <platform name="android">
