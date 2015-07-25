@@ -43,8 +43,39 @@
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:errorObject];
     }
     
-    pluginResult.keepCallback = [NSNumber numberWithBool:true];
+    
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void) loginVkSdk:(CDVInvokedUrlCommand*)command
+{
+    [self vkLoginWithBlock:^(NSString *token) {
+        CDVPluginResult* pluginResult = nil;
+        if(token) {
+            NSLog(@"Acquired new VK token");
+            NSDictionary *result = @{
+                @"eventType" : @"newToken",
+                @"eventData" : @{
+                    @"accessToken" : token,
+                    @"userId" : @"123",
+                    @"expiresIn": @86400,
+                    @"secret": @""
+                }
+            };
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+            
+        } else {
+            NSLog(@"Cant login to VKontakte");
+            NSDictionary *errorObject = @{
+                @"code" : @"loginError",
+                @"message" : @"Cant login to VKontakte"
+            };
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+        }
+        pluginResult.keepCallback = [NSNumber numberWithBool:true];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:pluginCallbackId];
+    }];
+
 }
 
 -(UIViewController*)findViewController
@@ -160,7 +191,7 @@
 -(void)vkLoginWithBlock:(void (^)(NSString *))block
 {
     vkCallBackBlock = [block copy];
-    [VKSdk authorize:@[VK_PER_WALL, VK_PER_OFFLINE] revokeAccess:NO forceOAuth:YES inApp:YES display:VK_DISPLAY_IOS];
+    [VKSdk authorize:@[VK_PER_PHOTOS, VK_PER_OFFLINE] revokeAccess:YES];
 }
 
 -(void)logout:(CDVInvokedUrlCommand *)command

@@ -12,6 +12,7 @@
 @property (nonatomic, retain) NSString*     clientId;
 
 - (void)initVkSdk:(CDVInvokedUrlCommand*)command;
+- (void)loginVkSdk:(CDVInvokedUrlCommand*)command;
 - (void)login:(CDVInvokedUrlCommand*)command;
 - (void)share:(CDVInvokedUrlCommand*)command;
 - (void)logout:(CDVInvokedUrlCommand*)command;
