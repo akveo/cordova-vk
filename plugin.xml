@@ -25,12 +25,12 @@
         </info>
         <config-file target="config.xml" parent="/*">
             <feature name="VkSdk">
-                <param name="ios-package" value="VkSdk"/>
+                <param name="ios-package" value="VkSdkPlugin"/>
             </feature>
         </config-file>
 
-        <header-file src="src/ios/SocialVk.h"/>
-        <source-file src="src/ios/SocialVk.m" />
+        <header-file src="src/ios/VkSdkPlugin.h"/>
+        <source-file src="src/ios/VkSdkPlugin.m" />
         <framework src="src/ios/VKontakte.framework" custom="true"/>
         <resource-file src="src/ios/VKSdkResources.bundle" />
 

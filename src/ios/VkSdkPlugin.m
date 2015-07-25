@@ -1,10 +1,11 @@
 //
-//  SocialVk.m
+//  VkSdkPlugin.m
 
-#import "SocialVk.h"
+#import "VkSdkPlugin.h"
 #import <VKontakte/VKBundle.h>
 
-@implementation SocialVk {
+@implementation VkSdkPlugin {
+    NSString * pluginCallbackId;
     CDVInvokedUrlCommand *savedCommand;
     void (^vkCallBackBlock)(NSString *);
     BOOL inited;
@@ -13,25 +14,36 @@
 
 @synthesize clientId;
 
-- (void) initSocialVk:(CDVInvokedUrlCommand*)command
+- (void) initVkSdk:(CDVInvokedUrlCommand*)command
 {
     CDVPluginResult* pluginResult = nil;
     
-    
-    if(!inited) {
+    if (pluginCallbackId == nil) {
         NSString *appId = [[NSString alloc] initWithString:[command.arguments objectAtIndex:0]];
         [VKSdk initializeWithDelegate:self andAppId:appId];
         if(![VKSdk wakeUpSession]) {
             NSLog(@"VK init error!");
         }
         
-        NSLog(@"SocialVk Plugin initalized");
+        NSLog(@"VkSdkPlugin Plugin initalized");
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myOpenUrl:) name:CDVPluginHandleOpenURLNotification object:nil];
-        inited = YES;
+        
+        NSDictionary *errorObject = @{
+            @"eventType" : @"initialized",
+            @"eventData" : @"success"
+        };
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:errorObject];
+        pluginCallbackId = command.callbackId;
+    } else {
+        NSDictionary *errorObject = @{
+            @"code" : @"initError",
+            @"message" : @"Plugin was already initialized"
+        };
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:errorObject];
     }
     
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    pluginResult.keepCallback = [NSNumber numberWithBool:true];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
