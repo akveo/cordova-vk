@@ -45,6 +45,14 @@ VkSdk.prototype.initiateLogin = function(permissions) {
 };
 
 /**
+ * Gets user data by id or ids (comma separated). If no ids provided, takes the id of user currently logged in
+ * @param userId comma separated list of ids
+ */
+VkSdk.prototype.getUser = function(userId, successCallback, errorCallback) {
+    cordova.exec(successCallback, errorCallback, 'VkSdk', 'getUser',[userId]);
+};
+
+/**
  * Debugging method to get the fingerprint of your application and put it in the field on application admin page
  * @param successCallback
  * @param errorCallback

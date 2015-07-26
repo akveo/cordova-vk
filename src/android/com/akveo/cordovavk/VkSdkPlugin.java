@@ -7,6 +7,12 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.VKSdkListener;
 import com.vk.sdk.VKUIHelper;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.util.VKUtil;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaArgs;
@@ -15,10 +21,11 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class VkSdk extends CordovaPlugin {
+public class VkSdkPlugin extends CordovaPlugin {
     public static final String ACTION_INIT = "initVkSdk";
     public static final String ACTION_LOGIN = "loginVkSdk";
     public static final String ACTION_GET_FINGERPRINT = "getFingerPrintVkSdk";
+    public static final String ACTION_USER_GET = "getUser";
 
     private VKSdkListener sdkListener = null;
 
@@ -34,6 +41,8 @@ public class VkSdk extends CordovaPlugin {
             return authorizeApplication(SdkUtil.jsonArrayToStringList(args.getJSONArray(0)).toArray(new String[0]));
         } else if (ACTION_GET_FINGERPRINT.equals(action)) {
             return getFingerprint(callbackContext);
+        } else if (ACTION_USER_GET.equals(action)) {
+            return getUser(args.getString(0), callbackContext);
         }
         return super.execute(action, args, callbackContext);
     }
@@ -66,6 +75,31 @@ public class VkSdk extends CordovaPlugin {
         String[] fingerprints = VKUtil.getCertificateFingerprint(activity, activity.getPackageName());
         JSONArray resultArray = SdkUtil.stringArrayToJsonArray(fingerprints);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, resultArray));
+        return true;
+    }
+
+    private boolean getUser(String userIds, final CallbackContext callbackContext) {
+        VKAccessToken token = VKSdk.getAccessToken();
+        if (userIds == null && token != null) {
+            userIds = token.userId;
+        }
+        if (userIds != null) {
+            VKApi.users().get(VKParameters.from(VKApiConst.USER_IDS, userIds)).executeWithListener(new VKRequest.VKRequestListener() {
+                @Override
+                public void onComplete(VKResponse response) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, response.json));
+                }
+
+                @Override
+                public void onError(VKError error) {
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, error.errorMessage));
+                }
+
+            });
+        } else {
+            callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "User ids not provided or user not logged in."));
+        }
+
         return true;
     }
 

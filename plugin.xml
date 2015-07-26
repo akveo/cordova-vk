@@ -58,7 +58,7 @@
         <!-- Cordova 2.5+ -->
         <config-file target="config.xml" parent="/*">
             <feature name="VkSdk">
-                <param name="android-package" value="com.akveo.cordovavk.VkSdk"/>
+                <param name="android-package" value="com.akveo.cordovavk.VkSdkPlugin"/>
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
