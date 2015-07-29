@@ -78,13 +78,9 @@ public class VkSdkPlugin extends CordovaPlugin {
         return true;
     }
 
-    private boolean getUser(String userIds, final CallbackContext callbackContext) {
-        VKAccessToken token = VKSdk.getAccessToken();
-        if (userIds == null && token != null) {
-            userIds = token.userId;
-        }
-        if (userIds != null) {
-            VKApi.users().get(VKParameters.from(VKApiConst.USER_IDS, userIds)).executeWithListener(new VKRequest.VKRequestListener() {
+    private boolean getUser(String userId, final CallbackContext callbackContext) {
+        if (userId != null) {
+            VKApi.users().get(VKParameters.from(VKApiConst.USER_ID, userId, VKApiConst.FIELDS, "id, first_name, sex, bdate")).executeWithListener(new VKRequest.VKRequestListener() {
                 @Override
                 public void onComplete(VKResponse response) {
                     callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, response.json));
