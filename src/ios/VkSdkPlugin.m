@@ -108,6 +108,33 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)getUser:(CDVInvokedUrlCommand*)command;
+{
+    NSDictionary *reqParams = @{
+        VK_API_USER_ID: [[NSString alloc] initWithString:[command.arguments objectAtIndex:0]],
+        VK_API_FIELDS: @"id, first_name, sex, bdate"
+    };
+    VKRequest * userGetReq = [[VKApi users] get:reqParams];
+    [userGetReq executeWithResultBlock:^(VKResponse * response) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:response.json];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        NSLog(@"Json result: %@", response.json);
+    } errorBlock:^(NSError * error) {
+        if (error.code != VK_API_ERROR) {
+            [error.vkError.request repeat];
+        } else {
+            NSLog(@"VK error: %@", error);
+            NSDictionary *errorObject = @{
+                @"code" : @"loginError",
+                @"message" : @"Cant get user",
+                @"details": error.domain
+            };
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:errorObject];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        } 
+    }];
+}
+
 #pragma mark - VKSdkDelegate
 
 -(void) vkSdkReceivedNewToken:(VKAccessToken*) newToken

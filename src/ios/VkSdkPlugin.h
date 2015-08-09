@@ -14,6 +14,7 @@
 - (void)initVkSdk:(CDVInvokedUrlCommand*)command;
 - (void)loginVkSdk:(CDVInvokedUrlCommand*)command;
 - (void)logout:(CDVInvokedUrlCommand*)command;
+- (void)getUser:(CDVInvokedUrlCommand*)command;
 
 
 @end
